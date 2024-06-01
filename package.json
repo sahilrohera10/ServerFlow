@@ -1,0 +1,38 @@
+{
+  "name": "load_balancer",
+  "version": "1.0.0",
+  "description": "a load balancer based on reverse proxy that handles the requests from the client",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon src/index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sahilrohera10/ServerFlow.git"
+  },
+  "keywords": [
+    "load",
+    "balancer",
+    "servers",
+    "reverse",
+    "proxy"
+  ],
+  "author": "Sahil Rohera",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sahilrohera10/ServerFlow/issues"
+  },
+  "homepage": "https://github.com/sahilrohera10/ServerFlow#readme",
+  "dependencies": {
+    "axios": "^1.7.2",
+    "express": "^4.19.2",
+    "node-schedule": "^2.1.1",
+    "nodemon": "^3.1.2"
+  },
+  "devDependencies": {
+    "@types/node-schedule": "^2.1.7",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5"
+  }
+}
