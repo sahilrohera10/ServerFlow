@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
 import axios from "axios";
 import schedule from "node-schedule";
 import { GET_A_HEALTHY_SERVER, PERFORM_HEALTH_CHECK } from "./utils/utils";
@@ -11,17 +11,16 @@ interface session {
   server: string;
 }
 
+// here we have a list of distributed servers, for which the load balancer shall be implemented
 export const servers: string[] = [
   "http://localhost:8001",
   "http://localhost:8002",
-]; // here we have a list of distributed servers,
-// for which the load balancer shall be implemented
+];
 
 export const sessionMap: { [key: string]: string } = {}; // an object that contains ip as key and a corresponding server address
 export const healthMap: { [key: string]: boolean } = {}; // an object which marks every server with a bool value (true/false) for their health.
 
 // lets map all the servers present in the list as healthy for initial setup
-
 // instead could use forEach as well
 for (let i = 0; i < servers.length; i++) {
   healthMap[servers[i]] = true;
@@ -31,7 +30,16 @@ for (let i = 0; i < servers.length; i++) {
 PERFORM_HEALTH_CHECK();
 
 // Now schedule a health check process for every 14 mins
-schedule.scheduleJob("*/2 * * * *", PERFORM_HEALTH_CHECK);
+schedule.scheduleJob("*/14 * * * *", PERFORM_HEALTH_CHECK);
+
+// middleware to log the incoming request
+app.use((req: Request, res: Response, next: NextFunction) => {
+  console.log(
+    `Incoming request from ${req.socket.remoteAddress} to ${req.originalUrl}`
+  );
+
+  next();
+});
 
 // middleware that handles the incoming client's requests
 app.use((req: Request, res: Response) => {
