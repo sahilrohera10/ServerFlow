@@ -42,7 +42,13 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 });
 
 // middleware that handles the incoming client's requests
-app.use((req: Request, res: Response) => {
+app.use((req: Request, res: Response, next: NextFunction) => {
+  const adminPaths = ["/add-server", "/remove-server"];
+  if (adminPaths.includes(req.originalUrl)) {
+    next();
+    return;
+  }
+
   // get the client ip address from the request
   const client_ip = req.socket.remoteAddress || "";
 
@@ -68,6 +74,38 @@ app.use((req: Request, res: Response) => {
     .catch(() => {
       return res.status(502).send("Bad Gateway");
     });
+});
+
+// Endpoint to add a new backend server
+app.post("/add-server", express.json(), (req: Request, res: Response) => {
+  const { server } = req.body;
+  if (servers.includes(server)) {
+    return res.status(400).send("Server already exists.");
+  }
+  servers.push(server);
+  healthMap[server] = true;
+  res.status(200).send("Server added successfully.");
+});
+
+// Endpoint to remove a backend server
+app.post("/remove-server", express.json(), (req: Request, res: Response) => {
+  const { server } = req.body;
+  const index = servers.indexOf(server);
+  if (index === -1) {
+    return res.status(400).send("Server not found.");
+  }
+
+  server.splice(index, 1);
+  delete healthMap[server];
+
+  // Clean up session map entries pointing to the removed server
+  Object.keys(sessionMap).forEach((clientIp) => {
+    if (sessionMap[clientIp] === server) {
+      delete sessionMap[clientIp];
+    }
+  });
+
+  res.status(200).send("Server removed successfully.");
 });
 
 app.listen(PORT, () => {
