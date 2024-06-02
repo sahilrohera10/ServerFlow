@@ -8,6 +8,8 @@ ServerFlow is a custom-built load balancer written in TypeScript. It provides es
 - **Health Checks**: Monitor backend servers and only send traffic to healthy ones.
 - **Session Persistence**: Ensure requests from the same client IP are consistently routed to the same backend server.
 - **Logging**: Keep track of requests and server health status.
+- **Dynamic Server Management**: Add or remove backend servers dynamically.
+
 
 ## Installation
 
