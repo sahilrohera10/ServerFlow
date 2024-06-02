@@ -45,4 +45,4 @@ Each backend server should have a `/health` endpoint that returns a status of `2
 To start the load balancer, run:
 
 ```bash
-npx nodemon
+npm start
