@@ -3,6 +3,7 @@ import axios from "axios";
 import schedule from "node-schedule";
 import { GET_A_HEALTHY_SERVER, PERFORM_HEALTH_CHECK } from "./utils/utils";
 const app = express();
+const https = require("https");
 
 const PORT = 8000;
 
@@ -13,8 +14,9 @@ interface session {
 
 // here we have a list of distributed servers, for which the load balancer shall be implemented
 export const servers: string[] = [
-  "http://localhost:8001",
-  "http://localhost:8002",
+  "https://ticketplus-backend.onrender.com",
+  "https://ticketplus-backend-vs3y.onrender.com",
+  "https://ticketplus-backend-t1m3.onrender.com",
 ];
 
 export const sessionMap: { [key: string]: string } = {}; // an object that contains ip as key and a corresponding server address
@@ -54,6 +56,8 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 
   const server = GET_A_HEALTHY_SERVER(client_ip);
 
+  console.log("got healthy server => ", server);
+
   if (!server) {
     res.status(503).send("Service unavailable");
     return;
@@ -61,6 +65,13 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 
   // create the endpoint which is supposed to get hit by client
   const target_url = `${server}${req.originalUrl}`;
+
+  console.log({
+    method: req.method,
+    url: target_url,
+    headers: req.headers,
+    data: req.body,
+  });
 
   axios({
     method: req.method,
@@ -71,7 +82,8 @@ app.use((req: Request, res: Response, next: NextFunction) => {
     .then((response) => {
       return res.status(response.status).json(response.data);
     })
-    .catch(() => {
+    .catch((error) => {
+      console.error("Error forwarding request:", error);
       return res.status(502).send("Bad Gateway");
     });
 });

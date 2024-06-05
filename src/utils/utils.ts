@@ -37,10 +37,11 @@ export function GET_SERVER_FOR_CLIENT(client_ip: string): string {
 export function PERFORM_HEALTH_CHECK() {
   servers.forEach((server) => {
     axios
-      .get(`${server}/health`)
+      .get(`${server}/v1/api/save/1`)
       .then((response) => {
         if (response.status === 200) {
           healthMap[server] = true;
+          console.log("All servers are healthy");
         } else {
           healthMap[server] = false;
           console.log(`Unhealthy server => ${server}`);
