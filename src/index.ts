@@ -86,12 +86,8 @@ app.use((req: Request, res: Response, next: NextFunction) => {
     data: req.body,
   });
 
-  axios({
-    method: req.method,
-    url: target_url,
-    headers: req.headers,
-    data: req.body,
-  })
+  axios
+    .get(target_url)
     .then((response) => {
       return res.status(response.status).json(response.data);
     })
