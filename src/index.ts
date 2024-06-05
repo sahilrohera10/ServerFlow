@@ -86,8 +86,33 @@ app.use((req: Request, res: Response, next: NextFunction) => {
     data: req.body,
   });
 
-  axios
-    .get(target_url)
+  const axiosOptions = {
+    url: target_url,
+    headers: req.headers,
+    data: req.body,
+  };
+
+  let axiosRequest;
+
+  switch (req.method.toLowerCase()) {
+    case "get":
+      axiosRequest = axios.get(target_url, axiosOptions);
+      break;
+    case "post":
+      axiosRequest = axios.post(target_url, req.body, axiosOptions);
+      break;
+    case "put":
+      axiosRequest = axios.put(target_url, req.body, axiosOptions);
+      break;
+    case "delete":
+      axiosRequest = axios.delete(target_url, axiosOptions);
+      break;
+    default:
+      res.status(405).send("Method Not Allowed");
+      return;
+  }
+
+  axiosRequest
     .then((response) => {
       return res.status(response.status).json(response.data);
     })
