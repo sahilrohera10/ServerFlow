@@ -51,6 +51,13 @@ app.use((req: Request, res: Response, next: NextFunction) => {
     return;
   }
 
+  const cdnLoop = req.header("cdn-loop");
+  if (cdnLoop && cdnLoop.includes("loops=1")) {
+    // If the request has already been processed by the load balancer, send a response directly
+    res.status(200).send("Request already processed by load balancer.");
+    return;
+  }
+
   if (req.originalUrl === "/") {
     // If the request URL is the root path, skip the forwarding logic
     res.status(200).send("Load balancer is running.");
