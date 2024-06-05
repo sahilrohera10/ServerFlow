@@ -54,6 +54,12 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   // get the client ip address from the request
   const client_ip = req.socket.remoteAddress || "";
 
+  if (client_ip === "::1" || client_ip === "127.0.0.1") {
+    // If the request is from the load balancer, skip the forwarding logic
+    next();
+    return;
+  }
+
   const server = GET_A_HEALTHY_SERVER(client_ip);
 
   console.log("got healthy server => ", server);
