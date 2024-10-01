@@ -1,4 +1,4 @@
-# ServerFlow
+# ServerFlow - Load Balancer
 
 ServerFlow is a custom-built load balancer written in TypeScript. It provides essential load balancing features such as request distribution, health checks, session persistence, and logging. This project aims to distribute incoming requests across multiple backend servers efficiently while ensuring that only healthy servers handle traffic.
 
